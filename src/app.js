@@ -33,9 +33,7 @@
 
 
 
-// src/app.js
 import express from "express";
-import cors from "cors";
 
 import errorHandler from "./middleware/errorMiddleware.js";  
 import authRoutes from "./routes/authRoutes.js";
@@ -45,38 +43,33 @@ import adminRoutes from "./routes/adminRoutes.js";
 
 const app = express();
 
-// CORS: allow localhost and Vercel frontend
-import cors from "cors";
-
+// Allowed origins
 const allowedOrigins = [
-    "http://localhost:3000",
-    "https://moive-ebus.vercel.app"
+  "http://localhost:3000",
+  "https://moive-ebus.vercel.app"
 ];
 
-app.use(cors({
-    origin: function(origin, callback) {
-        // allow requests with no origin (like mobile apps or curl)
-        if (!origin) return callback(null, true);
-        if (allowedOrigins.indexOf(origin) === -1) {
-            const msg = `The CORS policy for this site does not allow access from the specified Origin.`;
-            return callback(new Error(msg), false);
-        }
-        return callback(null, true);
-    },
-    credentials: true,
-    methods: ["GET","POST","PUT","PATCH","DELETE","OPTIONS"],
-    allowedHeaders: ["Content-Type","Authorization"]
-}));
+// CORS middleware - must come before routes
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
 
-// Must be before all routes
-app.options("*", cors({
-    origin: allowedOrigins,
-    credentials: true,
-    methods: ["GET","POST","PUT","PATCH","DELETE","OPTIONS"],
-    allowedHeaders: ["Content-Type","Authorization"]
-}));
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
 
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
 
+  // Handle preflight OPTIONS request
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
+
+  next();
+});
+
+// JSON parser
 app.use(express.json());
 
 // Routes
