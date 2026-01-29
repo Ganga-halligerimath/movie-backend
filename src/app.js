@@ -11,16 +11,8 @@ import adminRoutes from "./routes/adminRoutes.js"
 
 const app = express();
 
-// app.use(cors());
-app.use(
-  cors({
-    origin: [
-      "https://moive-nwzn.vercel.app", // your Vercel frontend
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
-);
+app.use(cors());
+
 
 app.use(express.json());
 
