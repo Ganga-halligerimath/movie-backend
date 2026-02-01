@@ -46,7 +46,10 @@ const app = express();
 // Allowed origins
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://moive-ebus.vercel.app"
+  "https://moive-ebus.vercel.app",
+  "https://localhost",
+  "http://localhost",
+  "http://10.0.2.2"
 ];
 
 // CORS middleware - must come before routes
@@ -84,3 +87,4 @@ movieQueue();
 app.use(errorHandler);
 
 export default app;
+  
